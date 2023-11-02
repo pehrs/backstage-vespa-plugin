@@ -1,6 +1,6 @@
 # backstage-vespa-plugin
 
-Welcome to the vespa plugin!
+Welcome to the vespa [backstage](https://backstage.io/) plugin!
 
 The target of these plugins are organizations that run multiple [Vespa](https://github.com/vespa-engine/vespa) clusters (in multiple regions) and want to quicky have an overview of their status.
 
