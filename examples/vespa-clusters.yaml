@@ -10,8 +10,7 @@ spec:
   owner: guests
 
 ##
-## If you group your vespa clusters in systems then the vespa-plugin can show them as a single row.
-## Altertaively you can add the 'vespa-name' label to do the same.
+## NOTE: For now you have to organize your vespa clusters (components) as part of a system for the plugin to work.
 ##
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
