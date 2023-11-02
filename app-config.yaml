@@ -74,7 +74,7 @@ catalog:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [Component, System, API, Resource, Location]
+    - allow: [Component, System, API, Resource, Location, Domain]
   locations:
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
@@ -91,6 +91,10 @@ catalog:
       target: ../../examples/org.yaml
       rules:
         - allow: [User, Group]
+
+    # Local example for the vespa cluster plugin (https://github.com/pehrs/backstage-vespa-plugin)
+    - type: file
+      target: ../../examples/vespa-clusters.yaml
 
     ## Uncomment these lines to add more example data
     # - type: url

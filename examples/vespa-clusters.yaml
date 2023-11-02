@@ -1,0 +1,159 @@
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format/#kind-domain
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: vespa-clusters
+  description: Vespa clusters
+  title: Vespa Cluster
+spec:
+  owner: guests
+
+##
+## If you group your vespa clusters in systems then the vespa-plugin can show them as a single row.
+## Altertaively you can add the 'vespa-name' label to do the same.
+##
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: vespa1
+spec:
+  owner: guests
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vespa1-europe-west1
+  description: Small test cluster in europe
+  label:
+    - vespa-region: europe-west1
+    # [optional and not yet implemented] Alterative way to specify a "system" of
+    # vespa clusters if you do not delcare the vespa cluster as part of a System.
+    # - vespa-system: vespa1
+  tags:
+    - vespa
+  links:
+    - url: "http://vespa1.europe-west1.my-domain.net:19071"
+      title: Vespa Endpoint
+      icon: dashboard
+      type: vespa-endpoint
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
+  domain: vespa-clusters
+  system: vespa1
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vespa1-us-central1
+  label:
+    - vespa-region: us-central1
+  tags:
+    - vespa
+  links:
+    - url: "http://vespa1.us-central1.my-domain.net:19071"
+      title: Vespa Endpoint
+      icon: dashboard
+      type: vespa-endpoint
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
+  domain: vespa-clusters
+  system: vespa1
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vespa1-us-east1
+  label:
+    - vespa-region: us-east1
+  tags:
+    - vespa
+  links:
+    - url: "http://vespa1.us-east1.my-domain.net:19071"
+      title: Vespa Endpoint
+      icon: dashboard
+      type: vespa-endpoint
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
+  domain: vespa-clusters
+  system: vespa1
+  
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: vespa2
+spec:
+  owner: guests    
+---
+# Vespa2 clusters
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vespa2-europe-west1
+  description: Small test cluster in europe
+  label:
+    - vespa-region: europe-west1
+  tags:
+    - vespa
+  links:
+    - url: "http://vespa2.europe-west1.my-domain.net:19071"
+      title: Vespa Endpoint
+      icon: dashboard
+      type: vespa-endpoint
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
+  domain: vespa-clusters
+  system: vespa2
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vespa2-us-central1
+  label:
+    - vespa-region: us-central1
+  tags:
+    - vespa
+  links:
+    - url: "http://vespa2.us-central1.my-domain.net:19071"
+      title: Vespa Endpoint
+      icon: dashboard
+      type: vespa-endpoint
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
+  domain: vespa-clusters
+  system: vespa2
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vespa2-us-east1
+  label:
+    - vespa-region: us-east1
+  tags:
+    - vespa
+  links:
+    - url: "http://vespa2.us-east1.my-domain.net:19071"
+      title: Vespa Endpoint
+      icon: dashboard
+      type: vespa-endpoint
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
+  domain: vespa-clusters
+  system: vespa2
