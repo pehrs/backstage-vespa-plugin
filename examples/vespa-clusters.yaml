@@ -9,150 +9,52 @@ metadata:
 spec:
   owner: guests
 
-##
-## NOTE: For now you have to organize your vespa clusters (components) as part of a system for the plugin to work.
-##
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: vespa1
+  name: vespa-clusters
+  description: Vespa Clusters
 spec:
   owner: guests
+
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: vespa1-europe-west1
-  description: Small test cluster in europe
+  name: vespa-cluster1
+  description: Vespa cluster in several regions
   label:
-    - vespa-region: europe-west1
-    # [optional and not yet implemented] Alterative way to specify a "system" of
-    # vespa clusters if you do not delcare the vespa cluster as part of a System.
-    # - vespa-system: vespa1
+    - vespa-plugin/regions: "eu-west1,eu-east2,us-central1"
+    - vespa-plugin/endpoint: "srv:_vespa-cluster1._http.services.{region}.my-domain.net"
   tags:
     - vespa
-  links:
-    - url: "http://vespa1.europe-west1.my-domain.net:19071"
-      title: Vespa Endpoint
-      icon: dashboard
-      type: vespa-endpoint
 spec:
   type: service
   lifecycle: experimental
   owner: guests
   domain: vespa-clusters
-  system: vespa1
+  system: vespa-clusters
+
+
 ---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: vespa1-us-central1
+  name: vespa-cluster2-us-central1
+  description: Vespa cluster in a single region
   label:
-    - vespa-region: us-central1
+    - vespa-plugin/regions: "us-central1"
+    - vespa-plugin/endpoint: "http://vespa-cluster2.us-central1.my-domain.net.:19071"
   tags:
     - vespa
-  links:
-    - url: "http://vespa1.us-central1.my-domain.net:19071"
-      title: Vespa Endpoint
-      icon: dashboard
-      type: vespa-endpoint
 spec:
   type: service
   lifecycle: experimental
   owner: guests
   domain: vespa-clusters
-  system: vespa1
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: vespa1-us-east1
-  label:
-    - vespa-region: us-east1
-  tags:
-    - vespa
-  links:
-    - url: "http://vespa1.us-east1.my-domain.net:19071"
-      title: Vespa Endpoint
-      icon: dashboard
-      type: vespa-endpoint
-spec:
-  type: service
-  lifecycle: experimental
-  owner: guests
-  domain: vespa-clusters
-  system: vespa1
-  
----
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
-apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
-  name: vespa2
-spec:
-  owner: guests    
----
-# Vespa2 clusters
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: vespa2-europe-west1
-  description: Small test cluster in europe
-  label:
-    - vespa-region: europe-west1
-  tags:
-    - vespa
-  links:
-    - url: "http://vespa2.europe-west1.my-domain.net:19071"
-      title: Vespa Endpoint
-      icon: dashboard
-      type: vespa-endpoint
-spec:
-  type: service
-  lifecycle: experimental
-  owner: guests
-  domain: vespa-clusters
-  system: vespa2
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: vespa2-us-central1
-  label:
-    - vespa-region: us-central1
-  tags:
-    - vespa
-  links:
-    - url: "http://vespa2.us-central1.my-domain.net:19071"
-      title: Vespa Endpoint
-      icon: dashboard
-      type: vespa-endpoint
-spec:
-  type: service
-  lifecycle: experimental
-  owner: guests
-  domain: vespa-clusters
-  system: vespa2
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: vespa2-us-east1
-  label:
-    - vespa-region: us-east1
-  tags:
-    - vespa
-  links:
-    - url: "http://vespa2.us-east1.my-domain.net:19071"
-      title: Vespa Endpoint
-      icon: dashboard
-      type: vespa-endpoint
-spec:
-  type: service
-  lifecycle: experimental
-  owner: guests
-  domain: vespa-clusters
-  system: vespa2
+  system: vespa-clusters
+
+

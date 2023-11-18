@@ -7,7 +7,10 @@ The target of these plugins are organizations that run multiple [Vespa](https://
 This is a combination of 2 plugins (the [frontend](./plugins/vespa/README.md) and the [backend](./plugins/vespa-backend/README.md)) that will give an overview of your Vespa clusters.
 
 ![vespa plugin screenshot](screenshot1.png "Screenshot")
-Example screenshot: showing 32 vespa clusters in 6 regions.
+Example screenshot: showing 14 vespa clusters in 6 regions.
+
+![vespa plugin details screenshot](screenshot2.png "Details Screenshot")
+Example screenshot: showing cluster content details.
 
 ## Installation
 
@@ -119,13 +122,13 @@ The plugins use tags, labels and links defined for your components to figure out
    
    * `labels`
    
-     `vespa-region` - Indicates which region the cluster is located in (This is used as the name of the column, example: `"europe-west1"`)
-	 
-   * `links`
-   
-     `url`  - The endpoint url for one of the vespa controllers (example `"http://vespa1.europe-west1.my-domain.net:19071"` )
-	 
-	 `type` - This must be `vespa-endpoint`
+     `vespa-plugin/regions` - Indicates which regions the clusters are located in. 
+	 Each region (from all clusters) will become one column in the vespa overview (see above).
+
+     `vespa-plugin/endpoint` - The url pattern to the config node master node.
+	 The `vespa-plugin/endpoint` value can be either a http or srv (dns) pattern (see example below).
+	 The variable `{region}` will be substitued from the `vespa-plugin/regions` label.
+
 	 
 Here's an example of a system and component:
 ```yaml
@@ -133,32 +136,51 @@ Here's an example of a system and component:
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: vespa1
+  name: vespa-clusters
+  description: Vespa Clusters
 spec:
   owner: guests
+
 ---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: vespa1-europe-west1
-  description: Small test cluster in europe
+  name: vespa-cluster1
+  description: Vespa cluster in several regions
   label:
-    - vespa-region: europe-west1
+    - vespa-plugin/regions: "eu-west1,eu-east2,us-central1"
+    - vespa-plugin/endpoint: "srv:_vespa-cluster1._http.services.{region}.my-domain.net"
   tags:
     - vespa
-  links:
-    - url: "http://vespa1.europe-west1.my-domain.net:19071"
-      title: Vespa Endpoint
-      icon: dashboard
-      type: vespa-endpoint
 spec:
   type: service
   lifecycle: experimental
   owner: guests
-  system: vespa1
+  system: vespa-clusters
+
+
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vespa-cluster2-us-central1
+  description: Single vespa cluster
+  label:
+    - vespa-plugin/regions: "us-central1"
+    - vespa-plugin/endpoint: "http://vespa-cluster2.us-central1.my-domain.net.:19071"
+  tags:
+    - vespa
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
+  system: vespa-clusters
+
 ```
 
-Take a look at the [examples/vespa-clusters.yaml](examples/vespa-clusters.yaml) for a full example.
+Take a look at the [examples/vespa-clusters.yaml](examples/vespa-clusters.yaml) for a example.
 
 ## TODO
 

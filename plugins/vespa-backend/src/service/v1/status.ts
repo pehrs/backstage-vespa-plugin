@@ -1,5 +1,5 @@
 import { CatalogApi } from '@backstage/catalog-client';
-import { fetchJson } from './utils';
+import { fetchJson } from '../utils';
 
 // @deprecated: should not be used
 export async function getStatus(catalogApi: CatalogApi, endpoint: URL, response) {

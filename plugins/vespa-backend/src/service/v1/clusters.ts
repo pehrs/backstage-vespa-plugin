@@ -1,6 +1,6 @@
 
 import { CatalogApi } from '@backstage/catalog-client';
-import { fetchJson, fetchVespaContentAsync, getEndpointFromCatalogData, vespaContentURL } from './utils';
+import { fetchJson, fetchWithTimeout, getEndpointFromCatalogData, vespaContentURL } from '../utils';
 import { XMLParser } from 'fast-xml-parser';
 
 function getSystemName(clusterData: any) {
@@ -132,7 +132,6 @@ export async function getVespaClusters(catalogApi: CatalogApi, verbose: boolean,
     const regions = new Set<string>();
     const systemNames = new Set<string>();
 
-
     vespaClusters.items.forEach(clusterCatalogData => {
         const systemName = getSystemName(clusterCatalogData);
         if (systemName) {
@@ -142,68 +141,82 @@ export async function getVespaClusters(catalogApi: CatalogApi, verbose: boolean,
         const endpoint = getEndpointFromCatalogData(clusterCatalogData);
         // clusterEndpoints[cluster.metadata.name] =  endpoint
 
-        if (verbose) {
-            metricPromises.push(fetchJson(new URL(`${endpoint}/metrics/v2/values`)))
-        }
+        if (endpoint) {
 
-        const parser = new XMLParser({
-            ignoreAttributes: false,
-            attributeNamePrefix: ""
-        });
-        servicesXmlPromises.push(fetch(vespaContentURL(endpoint, "services.xml"))
-            .then(response => response.text())
-            .then(xmlText => parser.parse(xmlText))
-            .then(servicesXml => {
-                return {
-                    state: "ok",
-                    endpoint: endpoint,
-                    cluster: clusterCatalogData.metadata.name,
-                    response: servicesXml,
-                }
-            }));
-
-        clusterNames.push(clusterCatalogData.metadata.name)
-        if (systemName) {
-            var sysClusterNames = systemClusters[systemName];
-            if (sysClusterNames === undefined) {
-                sysClusterNames = [];
+            if (verbose) {
+                metricPromises.push(fetchJson(new URL(`${endpoint}/metrics/v2/values`)))
             }
-            sysClusterNames.push(clusterCatalogData.metadata.name);
-            systemClusters[systemName] = sysClusterNames;
-        }
 
-        const region = getRegion(clusterCatalogData);
-        if (region) {
-            regions.add(region);
-        }
-        clusterData[clusterCatalogData.metadata.name] = {
-            name: clusterCatalogData.metadata.name,
-            region: region,
-            endpoint: endpoint,
-            systemName: systemName,
+            const parser = new XMLParser({
+                ignoreAttributes: false,
+                attributeNamePrefix: ""
+            });
+
+            servicesXmlPromises.push(fetchWithTimeout(vespaContentURL(endpoint, "services.xml"))
+                .then(response => response.text())
+                .then(xmlText => parser.parse(xmlText))
+                .then(servicesXml => {
+                    return {
+                        state: "ok",
+                        endpoint: endpoint,
+                        cluster: clusterCatalogData.metadata.name,
+                        response: servicesXml,
+                    }
+                }).catch(reason => {
+                    return {
+                        state: "ERROR",
+                        endpoint: endpoint,
+                        reason: reason,
+                    }
+                }));
+
+            clusterNames.push(clusterCatalogData.metadata.name)
+            if (systemName) {
+                var sysClusterNames = systemClusters[systemName];
+                if (sysClusterNames === undefined) {
+                    sysClusterNames = [];
+                }
+                sysClusterNames.push(clusterCatalogData.metadata.name);
+                systemClusters[systemName] = sysClusterNames;
+            }
+
+            const region = getRegion(clusterCatalogData);
+            if (region) {
+                regions.add(region);
+            }
+            clusterData[clusterCatalogData.metadata.name] = {
+                name: clusterCatalogData.metadata.name,
+                region: region,
+                endpoint: endpoint,
+                systemName: systemName,
+            }
         }
     });
 
     (await Promise.all(metricPromises)).forEach(result => {
-        const endpoint = result["endpoint"];
-        const data = findEndpointData(clusterData, endpoint.hostname)
-        if (data) {
-            data["summary"] = getSummary(result.response)
-            data["doctypes"] = getDocTypes(result.response)
+        if (result.status === "ok") {
+            const endpoint = result["endpoint"];
+            const data = findEndpointData(clusterData, endpoint.hostname)
+            if (data) {
+                data["summary"] = getSummary(result.response)
+                data["doctypes"] = getDocTypes(result.response)
+            }
         }
     });
 
     (await Promise.all(servicesXmlPromises)).forEach(result => {
-        const endpoint = new URL(result["endpoint"]);
-        const data = findEndpointData(clusterData, endpoint.hostname)
-        if (data) {
-            const servicesXml = result.response;
-            const services = servicesXml["services"];
-            if (services) {
-                const content = services["content"];
-                if (content) {
-                    const contentId: string = content["id"];
-                    data["contentId"] = contentId;
+        if (result.status === "ok") {
+            const endpoint = new URL(result["endpoint"]);
+            const data = findEndpointData(clusterData, endpoint.hostname)
+            if (data) {
+                const servicesXml = result.response;
+                const services = servicesXml["services"];
+                if (services) {
+                    const content = services["content"];
+                    if (content) {
+                        const contentId: string = content["id"];
+                        data["contentId"] = contentId;
+                    }
                 }
             }
         }

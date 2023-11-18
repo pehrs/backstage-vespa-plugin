@@ -1,6 +1,6 @@
 import { CatalogApi } from '@backstage/catalog-client';
 import { Response } from 'express-serve-static-core';
-import { fetchJson, fetchVespaContentAsync, getEndpoint } from './utils';
+import { fetchJson, fetchVespaContentAsyncDeprecated, getEndpoint } from '../utils';
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 
 function getOrCreateGroup(response: any, groupNameAndKey: any) {
@@ -223,10 +223,10 @@ export async function getDocCounts(catalogApi: CatalogApi, clusterName: string, 
         attributeNamePrefix: ""
     });
 
-    const services_xml = await fetchVespaContentAsync(catalogApi, clusterName, "services.xml")
+    const services_xml = await fetchVespaContentAsyncDeprecated(catalogApi, clusterName, "services.xml")
         .then(urlResponse => urlResponse.text())
         .then(xmlText => parser.parse(xmlText));
-    const hosts_xml = await fetchVespaContentAsync(catalogApi, clusterName, "hosts.xml")
+    const hosts_xml = await fetchVespaContentAsyncDeprecated(catalogApi, clusterName, "hosts.xml")
         .then(urlResponse => urlResponse.text())
         .then(xmlText => parser.parse(xmlText));
 
