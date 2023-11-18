@@ -182,12 +182,6 @@ spec:
 
 Take a look at the [examples/vespa-clusters.yaml](examples/vespa-clusters.yaml) for a example.
 
-## TODO
-
-- Figure out how to "publish" the plugins.
-- [backend todo](plugins/vespa-backend/README.md#todo)
-- [frontend README](plugins/vespa/README.md)
-
 
 ## Developer notes
 

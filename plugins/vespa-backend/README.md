@@ -37,12 +37,3 @@ Cluster controller status page (needs to be looked up in model, figure out which
 Content (service.xml etc):
 `:19071/application/v2/tenant/default/application/default/environment/prod/region/default/instance/default/content`
 
-
-## TODO
-
-- Add support for declaring all three config nodes in the backstage component
-- Add support for (optional) SRV lookup of the config nodes
-- Add sservice to browse the application content
-- Make sure the services works for more "types" of installations (single node, different group setups)
-- Add suport for using the `vespa-system` label instead of having to organize vespa components in systems.
-- Add support for filtering on experimental/production clusters.
