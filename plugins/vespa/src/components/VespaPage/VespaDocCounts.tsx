@@ -7,6 +7,7 @@ import { fmtBytes, fmtNum, formatNumber } from './utils';
 
 type VespaDocCountsProps = {
     clusterName: string;
+    endpoint: string;
 };
 
 function getDocCount(indexData: any): number {
@@ -200,7 +201,7 @@ const labelSpanStyle: React.CSSProperties = {
     fontWeight: "bold",
 };
 
-export const VespaDocCounts = ({ clusterName }: VespaDocCountsProps) => {
+export const VespaDocCounts = ({ clusterName, endpoint }: VespaDocCountsProps) => {
     const [docCounts, setDocCounts] = useState(null)
     const config = useApi(configApiRef)
     const backendUrl = config.getString('backend.baseUrl');
@@ -209,7 +210,7 @@ export const VespaDocCounts = ({ clusterName }: VespaDocCountsProps) => {
     const [diffType, setDiffType] = useState<string>(DIFF_IN_NUMBERS)
 
     useEffect(() => {
-        fetch(`${backendUrl}/api/vespa/v1/doc-counts?cluster=${clusterName}`)
+        fetch(`${backendUrl}/api/vespa/v2/doc-counts?cluster=${clusterName}&endpoint=${endpoint}`)
             .then((result) => result.json())
             .then((data) => {
                 setDocCounts(data)

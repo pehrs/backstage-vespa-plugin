@@ -46,7 +46,7 @@ export const VespaPage = () => {
             </Header>
             <Content>
                 <Grid container spacing={3} direction="column">
-                    <Grid item>
+                    {/* <Grid item>
                         <FormControl style={flexContainer}>
                             <div style={labelStyle}>
                                 <span style={labelSpanStyle}>Options:</span>
@@ -57,7 +57,7 @@ export const VespaPage = () => {
                                 } label="Verbose" />
                             </FormGroup>
                         </FormControl>
-                    </Grid>
+                    </Grid> */}
                     <Grid item>
                         <VespaClustersList key={verbose.toString()} verbose={verbose} />
                     </Grid>

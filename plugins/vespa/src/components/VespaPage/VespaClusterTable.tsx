@@ -29,17 +29,64 @@ const useStyles = makeStyles({
     }
 });
 
-function getColumnsAndData(clusterInfo: any): [TableColumn[], any[]] {
+function renderRegionData(regionData: any, componentName: string) {
     const classes = useStyles();
 
+    const endpoint = regionData.endpoint;
+    const controllerLink = regionData.controllerLink;
+    return <div>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <Link to={`./${componentName}?endpoint=${endpoint}`}>
+                            <TableChart className={classes.denseIcon}
+                                titleAccess="Vespa Cluster details" />
+                        </Link>
+                    </td>
+                    <td>
+                        {/* This is a hack for now */}
+                        <Link to={controllerLink}>
+                            <SportsEsports className={classes.denseIcon} titleAccess="Vespa Controller Page" />
+                        </Link>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>;
+}
+
+function getData(clusterInfo: any): any[] {
+    const classes = useStyles();
+
+    const data: any[] = [];
+
+    const clusters = clusterInfo.clusters;
+
+    const clusterNames: string[] = Object.keys(clusters).sort();
+    for (const clusterName of clusterNames) {
+        const cluster = clusters[clusterName];
+        const res: any = {
+            name: <Link key={clusterName} id={clusterName} to={`/catalog/default/component/${clusterName}`}>
+                {clusterName}
+            </Link>,
+        }
+        for (const [region, regionData] of Object.entries<any>(cluster)) {
+            if (regionData.endpoint !== undefined) {
+                res[`details_${region}`] = renderRegionData(regionData, clusterName);
+            }
+        }
+        data.push(res);
+    };
+
+    return data;
+}
+
+export const VespaClusterTable = ({ clusterInfo }) => {
+
     const columns: TableColumn[] = [
-        { title: 'System', field: 'name', width: "2em" },
+        { title: 'Cluster', field: 'name', width: "2em" },
     ];
-
-    if (clusterInfo.verbose) {
-        columns.push({ title: 'Doc-Types', field: 'docTypes', width: "4em" })
-    }
-
     clusterInfo.regions.forEach(region => {
         columns.push({
             title: region,
@@ -47,129 +94,7 @@ function getColumnsAndData(clusterInfo: any): [TableColumn[], any[]] {
             width: "2em",
         })
     });
-
-    const rows: any[] = [];
-
-    clusterInfo.systemNames.forEach(name => {
-        const row: any = {
-            id: name,
-            name: name,
-        };
-        const sysClusters = clusterInfo.systemClusters[name];
-        const docTypes = new Set<string>();
-
-        clusterInfo.regions.forEach(region => {
-            const info = sysClusters.filter(clusterName => {
-                const clusterData = clusterInfo.clusters[clusterName];
-                return clusterData.region === region;
-            }).map(clusterName => {
-                return clusterInfo.clusters[clusterName];
-            }).shift();
-            if (info) {
-
-                info.doctypes?.forEach(docType => docTypes.add(docType));
-
-                var componentName = info.name;
-
-                // FIXME: This should be created using the backend and the vespa model and point to the main config node
-                const controllerEndpoint  = info.endpoint.replace(":19071", `:19050/clustercontroller-status/v1/${info.contentId}`)
-
-                if (info.summary) {
-                    const docCountTotal = fmtNum(info.summary.docCountTotal, 1);
-                    const docCountTotalTitle = `Doc-Count total: ${info.summary.docCountTotal}`;
-                    const diskUsageTotal = fmtBytes(info.summary.diskUsageTotal, 1);
-                    const diskUsageTotalTitle = `Disk-usage total: ${info.summary.diskUsageTotal}`;
-                    const memUsageTotal = fmtBytes(info.summary.memUsageTotal, 1);
-                    const memUsageTotalTitle = `Memory-usage total: ${info.summary.memUsageTotal}`;
-                    row[`details_${region}`] = <div>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td colSpan={2}>
-                                                        <Link to={`./${componentName}`}>
-                                                            <span title={docCountTotalTitle} className={classes.summaryCell}>
-                                                                {docCountTotal}
-                                                            </span>
-                                                        </Link>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <Link to={`./${componentName}`}>
-                                                            <span className={classes.summaryCell} title={diskUsageTotalTitle} >{diskUsageTotal}</span>
-                                                        </Link>
-                                                    </td>
-                                                    <td>
-                                                        <Link to={`./${componentName}`}>
-                                                            <span className={classes.summaryCell} title={memUsageTotalTitle} >{memUsageTotal}</span>
-                                                        </Link>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        {/* This is a hack for now */}
-                                        <Link to={controllerEndpoint}>
-                                            <SportsEsports className={classes.denseIcon} 
-                                            titleAccess="Vespa Controller Page" />
-                                        </Link>
-                                    </td>
-                                    <td>
-                                        <Link to={`/catalog/default/component/${componentName}`}>
-                                            <SettingsApplicationsIcon className={classes.denseIcon} 
-                                            titleAccess="Backstage Component details" />
-                                        </Link>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>;
-                } else {
-                    row[`details_${region}`] = <div>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <Link to={`./${componentName}`}>
-                                            <TableChart className={classes.denseIcon} 
-                                            titleAccess="Vespa Cluster details" />
-                                        </Link>
-                                    </td>
-                                    <td>
-                                        {/* This is a hack for now */}
-                                        <Link to={controllerEndpoint}>
-                                            <SportsEsports className={classes.denseIcon} titleAccess="Vespa Controller Page" />
-                                        </Link>
-                                    </td>
-                                    <td>
-                                        <Link to={`/catalog/default/component/${componentName}`}>
-                                            <SettingsApplicationsIcon className={classes.denseIcon} 
-                                            titleAccess="Backstage Component details" />
-                                        </Link>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                }
-
-            }
-        });
-        row["docTypes"] = Array.from(docTypes.values()).sort().toString()
-        rows.push(row)
-    });
-
-    return [columns, rows];
-}
-
-export const VespaClusterTable = ({ clusterInfo }) => {
-
-    const [columns, data] = getColumnsAndData(clusterInfo);
+    const data: any[] = getData(clusterInfo);
 
     return (<Table
         key={crypto.randomUUID()}

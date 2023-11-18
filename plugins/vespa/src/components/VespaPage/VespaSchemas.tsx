@@ -5,16 +5,16 @@ import { VespaRenderContent } from './VespaRenderContent';
 
 type VespaSchemasListProps = {
     clusterName: string;
+    endpoint: string;
 };
 
-export const VespaSchemasList = ({ clusterName }: VespaSchemasListProps) => {
+export const VespaSchemasList = ({ clusterName, endpoint }: VespaSchemasListProps) => {
 
     const [schemas, setSchemas] = useState<string[] | null>(null)
     const config = useApi(configApiRef)
     const backendUrl = config.getString('backend.baseUrl');
-    // console.log("backeverndUrl", backendUrl)
     useEffect(() => {
-        fetch(`${backendUrl}/api/vespa/v1/schemas?cluster=${clusterName}`)
+        fetch(`${backendUrl}/api/vespa/v2/schemas?cluster=${clusterName}&endpoint=${endpoint}`)
             .then((result) => result.json())
             .then((data) => {
                 setSchemas(data.schemas)
@@ -26,7 +26,7 @@ export const VespaSchemasList = ({ clusterName }: VespaSchemasListProps) => {
 
     const schemaCards: any[] = schemas.map(schemaName => {
         return <CardTab key={schemaName} label={schemaName}>
-            <VespaRenderContent language='yaml' clusterName={clusterName} contentPath={`schemas/${schemaName}`} />
+            <VespaRenderContent language='yaml' clusterName={clusterName} endpoint={endpoint} contentPath={`schemas/${schemaName}`} />
         </CardTab>;
     })
 

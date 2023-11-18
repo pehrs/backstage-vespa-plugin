@@ -6,10 +6,11 @@ import { androidstudio, docco } from 'react-syntax-highlighter/dist/cjs/styles/h
 
 type VespaRenderContentProps = {
     clusterName: string;
+    endpoint: string;
     contentPath: string;
     language: string;
 };
-export const VespaRenderContent = ({ clusterName, contentPath, language }: VespaRenderContentProps) => {
+export const VespaRenderContent = ({ clusterName, endpoint, contentPath, language }: VespaRenderContentProps) => {
 
     const [schemaTxt, setSchemaTxt] = useState<string | null>(null)
     const config = useApi(configApiRef)
@@ -24,7 +25,7 @@ export const VespaRenderContent = ({ clusterName, contentPath, language }: Vespa
     }
 
     useEffect(() => {
-        fetch(`${backendUrl}/api/vespa/v1/content?cluster=${clusterName}&path=${contentPath}`)
+        fetch(`${backendUrl}/api/vespa/v2/content?cluster=${clusterName}&path=${contentPath}&endpoint=${endpoint}`)
             .then((result) => result.json())
             .then((data) => {
                 setSchemaTxt(data.data)

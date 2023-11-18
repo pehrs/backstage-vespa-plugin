@@ -20,9 +20,8 @@ export const VespaClustersList = ({ verbose }: VespaClustersListProps) => {
     const [clusterInfo, setClusterInfo] = useState(null)
     const config = useApi(configApiRef)
     const backendUrl = config.getString('backend.baseUrl');
-    // console.log("backeverndUrl", backendUrl)
     useEffect(() => {
-        fetch(`${backendUrl}/api/vespa/v1/clusters?verbose=${verbose}`)
+        fetch(`${backendUrl}/api/vespa/v2/clusters?verbose=${verbose}`)
             .then((result) => result.json())
             .then((data) => {
                 setClusterInfo(data)
