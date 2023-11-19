@@ -125,10 +125,11 @@ The plugins use tags, labels and links defined for your components to figure out
      `vespa-plugin/regions` - Indicates which regions the clusters are located in. 
 	 Each region (from all clusters) will become one column in the vespa overview (see above).
 
-     `vespa-plugin/endpoint` - The url pattern to the config node master node.
+     `vespa-plugin/endpoint` - The url pattern to the config master node.
 	 The `vespa-plugin/endpoint` value can be either a http or srv (dns) pattern (see example below).
 	 The variable `{region}` will be substitued from the `vespa-plugin/regions` label.
 
+     `vespa-plugin/query-endpoint` - The url pattern to the query nodes.
 	 
 Here's an example of a system and component:
 ```yaml
@@ -150,7 +151,8 @@ metadata:
   description: Vespa cluster in several regions
   label:
     - vespa-plugin/regions: "eu-west1,eu-east2,us-central1"
-    - vespa-plugin/endpoint: "srv:_vespa-cluster1._http.services.{region}.my-domain.net"
+    - vespa-plugin/endpoint: "srv:_vespa-cluster1-config._http.services.{region}.my-domain.net"
+    - vespa-plugin/query-endpoint: "srv:_vespa-cluster1-query._http.services.{region}.my-domain.net"
   tags:
     - vespa
 spec:
@@ -169,7 +171,8 @@ metadata:
   description: Single vespa cluster
   label:
     - vespa-plugin/regions: "us-central1"
-    - vespa-plugin/endpoint: "http://vespa-cluster2.us-central1.my-domain.net.:19071"
+    - vespa-plugin/endpoint: "http://vespa-cluster2-config.us-central1.my-domain.net.:19071"
+    - vespa-plugin/query-endpoint: "http://vespa-cluster2-query.us-central1.my-domain.net.:8080"
   tags:
     - vespa
 spec:

@@ -4,19 +4,11 @@ import { CatalogApi } from '@backstage/catalog-client';
 export async function fetchWithTimeout(resource, options = {}) {
     const { timeout = 2000 } = options;
 
-    // const controller = new AbortController();
-    // const id = setTimeout(() => {
-    //     console.log("WARNING: Timeout calling " + resource);
-    //     controller.abort();
-    // }, timeout);
-
     const response = fetch(resource, {
         ...options,
         // signal: controller.signal
         signal: AbortSignal.timeout(timeout)
     });
-    // clearTimeout(id);
-
     return response;
 }
 

@@ -73,10 +73,10 @@ export async function getVespaClusters(catalogApi: CatalogApi, verbose: boolean,
     vespaClusters.items.forEach(catalogData => {
         const clusterName = catalogData.metadata.name;
         const clusterEndpoint: string | undefined = getLabel(catalogData, "vespa-plugin/endpoint");
+        const clusterQueryEndpoint: string | undefined = getLabel(catalogData, "vespa-plugin/query-endpoint");
         const clusterRegions: string | undefined = getLabel(catalogData, "vespa-plugin/regions");
         if (clusterEndpoint) {
             const cluster: any = getOrCreate(clusters, clusterName);
-            // cluster.endpoint = clusterEndpoint;
             if (clusterRegions) {
                 clusterRegions.split(",").forEach(regionName => {
                     collectedRegions.add(regionName);
@@ -102,13 +102,30 @@ export async function getVespaClusters(catalogApi: CatalogApi, verbose: boolean,
                         reg.endpoint = endpoint;
                         servicesXmlPromises.push(getServicesXml(endpoint, clusterName, regionName));
                     }
+                    if (clusterQueryEndpoint) {
+                        var queryEndpoint = clusterQueryEndpoint
+                            .replace("{region}", regionName);
+                        if (queryEndpoint.indexOf("srv:") != -1) {
+                            queryEndpoint = queryEndpoint.replace("srv:", "");
+                            srvLookupPromises.push(getEsEndpointFromSvr(queryEndpoint, "http")
+                                .then(srvEndpoint => {
+                                    console.log("srv endpoint", srvEndpoint);
+                                    if (srvEndpoint !== undefined) {
+                                        reg.queryEndpoint = srvEndpoint;
+                                    }
+                                })
+                            );
+                        } else {
+                            reg.queryEndpoint = queryEndpoint;
+                        }
+                    }
                 })
             } else {
                 // No regions declared then let's use "details"
                 collectedRegions.add("details");
                 const reg: any = getOrCreate(cluster, "details");
                 reg.endpoint = clusterEndpoint;
-
+                reg.queryEndpoint = clusterQueryEndpoint;
                 const endpoint = clusterEndpoint;
                 servicesXmlPromises.push(getServicesXml(endpoint, clusterName, "details"));
             }

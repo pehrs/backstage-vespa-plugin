@@ -14,6 +14,7 @@ import { getContent as getContentV1 } from './v1/debug';
 import { getContent as getContentV2 } from './v2/content';
 import { getDocCounts as getDocCountsV1 } from './v1/docCount';
 import { getDocCounts as getDocCountsV2 } from './v2/docCounts';
+import { runQuery } from './v2/query';
 
 export interface RouterOptions {
   config: Config;
@@ -128,6 +129,18 @@ export async function createRouter(
       response.json({ status: 'no-param', message: "Please provide the cluster, endpoint and path query params." });
     }
   });
+
+  router.get('/v2/query', (request, response) => {
+    const queryEndpoint = (request.query["queryEndpoint"] as string)
+    const yql = (request.query["yql"] as string)
+    if (queryEndpoint && yql) {
+      runQuery(queryEndpoint, yql, response);
+    } else {
+      response.json({ status: 'no-param', message: "Please provide the queryEndpoint and yql query params." });
+    }
+  });
+
+
 
   router.use(errorHandler());
   return router;

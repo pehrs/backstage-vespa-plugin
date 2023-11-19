@@ -33,13 +33,14 @@ function renderRegionData(regionData: any, componentName: string) {
     const classes = useStyles();
 
     const endpoint = regionData.endpoint;
+    const queryEndpoint = regionData.queryEndpoint;
     const controllerLink = regionData.controllerLink;
     return <div>
         <table>
             <tbody>
                 <tr>
                     <td>
-                        <Link to={`./${componentName}?endpoint=${endpoint}`}>
+                        <Link to={`./${componentName}?endpoint=${endpoint}&queryEndpoint=${queryEndpoint}`}>
                             <TableChart className={classes.denseIcon}
                                 titleAccess="Vespa Cluster details" />
                         </Link>

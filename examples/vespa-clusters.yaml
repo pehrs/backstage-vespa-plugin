@@ -27,7 +27,8 @@ metadata:
   description: Vespa cluster in several regions
   label:
     - vespa-plugin/regions: "eu-west1,eu-east2,us-central1"
-    - vespa-plugin/endpoint: "srv:_vespa-cluster1._http.services.{region}.my-domain.net"
+    - vespa-plugin/endpoint: "srv:_vespa-cluster1-config._http.services.{region}.my-domain.net"
+    - vespa-plugin/query-endpoint: "srv:_vespa-cluster1-query._http.services.{region}.my-domain.net"
   tags:
     - vespa
 spec:
@@ -47,7 +48,8 @@ metadata:
   description: Vespa cluster in a single region
   label:
     - vespa-plugin/regions: "us-central1"
-    - vespa-plugin/endpoint: "http://vespa-cluster2.us-central1.my-domain.net.:19071"
+    - vespa-plugin/endpoint: "http://vespa-cluster2-config.us-central1.my-domain.net.:19071"
+    - vespa-plugin/query-endpoint: "http://vespa-cluster2-query.us-central1.my-domain.net.:8080"
   tags:
     - vespa
 spec:

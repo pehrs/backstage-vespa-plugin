@@ -3,6 +3,7 @@ import { appThemeApiRef, configApiRef, useApi } from '@backstage/core-plugin-api
 import React, { useEffect, useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { androidstudio, docco } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
+import Editor from '@monaco-editor/react';
 
 type VespaRenderContentProps = {
     clusterName: string;
@@ -19,9 +20,9 @@ export const VespaRenderContent = ({ clusterName, endpoint, contentPath, languag
 
     const themeId = themeApi.getActiveThemeId();    
     // Use dark theme as default
-    var syntaxStyle = androidstudio;
+    var editorTheme = "vs-dark";
     if (themeId?.toLowerCase().indexOf("light") != -1) {
-        syntaxStyle = docco;
+        editorTheme = "vs";
     }
 
     useEffect(() => {
@@ -37,9 +38,12 @@ export const VespaRenderContent = ({ clusterName, endpoint, contentPath, languag
 
     return (
         <div key={contentPath}>
-            <SyntaxHighlighter language={language} style={syntaxStyle}>
-                {schemaTxt}
-            </SyntaxHighlighter>
+             <Editor
+            options={{ readOnly: true }} 
+            height="80vh" 
+            defaultLanguage={language} 
+            theme={editorTheme}
+            value={schemaTxt}/>
         </div>)
 
 }
