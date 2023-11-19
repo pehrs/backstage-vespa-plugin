@@ -12,6 +12,9 @@ Example screenshot: showing 14 vespa clusters in 6 regions.
 ![vespa plugin details screenshot](screenshot2.png "Details Screenshot")
 Example screenshot: showing cluster content details.
 
+![vespa query screenshot](screenshot3.png "Query Screenshot")
+Example screenshot: Running a query.
+
 ## Installation
 
 Make sure you have created a [backstage-app](https://backstage.io/docs/getting-started/#create-your-backstage-app) first, then:
@@ -105,14 +108,9 @@ Make sure you have created a [backstage-app](https://backstage.io/docs/getting-s
 ### Configure the plugins
 
 In order for the vespa plugins to work you need to add your vespa 
-clusters as services and components into the backstage catalog.
-   
-For now you have to organize your clusters within a "system"
+clusters as components into the backstage catalog.
 
-![Vespa system overview](system.png "System overview")
-   
-
-The vespa cluster component system will become one line in the vespa plugin list of clusters.
+The vespa cluster component become one line in the vespa plugin list of clusters.
 
 The plugins use tags, labels and links defined for your components to figure out what are vespa clusters:
    
